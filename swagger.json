@@ -1,0 +1,847 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "AWH Auth API",
+    "version": "0.1"
+  },
+  "paths": {
+    "/users": {
+      "get": {
+        "summary": "Get list of users",
+        "description": "Returns a list of users",
+        "parameters": [
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of users",
+            "schema": {
+              "$ref": "#/definitions/Users"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a user",
+        "description": "Adds a new user to the user's list",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "The user to create.",
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/User"
+                },
+                {
+                  "properties": {
+                    "password": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User successfully created.",
+            "schema": {
+              "allOf": [
+                {
+                  "properties": {
+                    "user": {
+                      "$ref": "#/definitions/User"
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The user's id",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "summary": "Get specific user",
+        "description": "Returns user",
+        "parameters": [
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User.",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a user",
+        "description": "update user",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "The user to update",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully updated.",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user",
+        "description": "Delete a single user identified by id",
+        "parameters": [
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User successfuly deleted."
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
+    "/users/me/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The user's ID",
+          "type": "string"
+        }
+      ],
+      "patch": {
+        "summary": "Update own account",
+        "description": "update own user's account",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "account update",
+            "schema": {
+              "properties": {
+                "fullname": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User successfully updated."
+          },
+          "400": {
+            "$ref": "#/responses/Standard400ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
+    "/users/token": {
+      "post": {
+        "summary": "Request token",
+        "description": "Get a token using valid user credentials",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "body",
+            "description": "The user to create.",
+            "schema": {
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User successfully created.",
+            "schema": {
+              "allOf": [
+                {
+                  "properties": {
+                    "user": {
+                      "$ref": "#/definitions/User"
+                    },
+                    "token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove token",
+        "description": "Remove a token",
+        "parameters": [
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Token successfuly deleted."
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
+    "/roles": {
+      "get": {
+        "summary": "Get list of roles",
+        "description": "Returns a list of roles",
+        "parameters": [
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of roles",
+            "schema": {
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "rolename": {
+                        "type": "string"
+                      },
+                      "isActive": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a role",
+        "description": "Adds a new role to the role's list",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "body",
+            "description": "The role to create.",
+            "schema": {
+              "$ref": "#/definitions/Role"
+            }
+          },
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Role successfully created.",
+            "schema": {
+              "$ref": "#/definitions/Role"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
+    "/roles/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The role's id",
+          "type": "string"
+        },
+        {
+          "$ref": "#/parameters/jwtAuthorization"
+        }
+      ],
+      "get": {
+        "summary": "Get specific role",
+        "description": "Returns role",
+        "responses": {
+          "200": {
+            "description": "Role.",
+            "schema": {
+              "$ref": "#/definitions/Role"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update a role",
+        "description": "update role",
+        "parameters": [
+          {
+            "name": "role",
+            "in": "body",
+            "description": "The role to update",
+            "schema": {
+              "properties": {
+                "rolename": {
+                  "type": "string"
+                },
+                "permissions": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "isActive": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "User successfully updated."
+          },
+          "400": {
+            "$ref": "#/responses/Standard400ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
+    "/permissions": {
+      "get": {
+        "summary": "Get list of permisions",
+        "description": "Returns a list of permissions",
+        "parameters": [
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of permissions",
+            "schema": {
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "id": {
+                        "type": "integer"
+                      },
+                      "perm_code": {
+                        "type": "string"
+                      },
+                      "application": {
+                        "type": "string"
+                      },
+                      "description": {
+                        "type": "boolean"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
+    "/organizations": {
+      "get": {
+        "summary": "Get list of organizations",
+        "description": "Returns a list of organizations",
+        "responses": {
+          "200": {
+            "description": "Organizations.",
+            "schema": {
+              "$ref": "#/definitions/Organizations"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create an organization",
+        "description": "Adds a new organization to the organization's list",
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "body",
+            "description": "The organization to create.",
+            "schema": {
+              "$ref": "#/definitions/Organization"
+            }
+          },
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Organization successfully created.",
+            "schema": {
+              "$ref": "#/definitions/Organization"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    },
+    "/organizations/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The organization's id",
+          "type": "string"
+        }
+      ],
+      "get": {
+        "summary": "Get specific organization",
+        "description": "Returns organization",
+        "responses": {
+          "200": {
+            "description": "Organization.",
+            "schema": {
+              "$ref": "#/definitions/Organization"
+            }
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      },
+      "patch": {
+        "summary": "Update an organization",
+        "description": "update organization",
+        "parameters": [
+          {
+            "name": "organization",
+            "in": "body",
+            "description": "The organization to update",
+            "schema": {
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Organization successfully updated.",
+            "schema": {
+              "$ref": "#/definitions/Organization"
+            }
+          },
+          "400": {
+            "$ref": "#/responses/Standard400ErrorResponse"
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "404": {
+            "$ref": "#/responses/Standard404ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete organization",
+        "description": "Delete an organization identified by id",
+        "parameters": [
+          {
+            "$ref": "#/parameters/jwtAuthorization"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Organization successfuly deleted."
+          },
+          "401": {
+            "$ref": "#/responses/Standard401ErrorResponse"
+          },
+          "409": {
+            "$ref": "#/responses/Standard409ErrorResponse"
+          },
+          "500": {
+            "$ref": "#/responses/Standard500ErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "parameters": {
+    "jwtAuthorization": {
+      "name": "Authorization",
+      "description": "JWT token",
+      "type": "string",
+      "in": "header",
+      "required": true
+    }
+  },
+  "definitions": {
+    "User": {
+      "required": [
+        "username",
+        "first_name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "username": {
+          "type": "string"
+        },
+        "first_name": {
+          "type": "string"
+        },
+        "middle_name": {
+          "type": "string"
+        },
+        "last_name": {
+          "type": "string"
+        },
+        "gender": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "mobile_number": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "organizations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Users": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      }
+    },
+    "Role": {
+      "required": [
+        "rolename"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "rolename": {
+          "type": "string"
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isActive": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Roles": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Role"
+          }
+        }
+      }
+    },
+    "Organization": {
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "readOnly": true
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Organizations": {
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Organization"
+          }
+        }
+      }
+    },
+    "Error": {
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "errors": {
+          "type": "array",
+          "items": {
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "error": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "userMessage": {
+          "type": "string"
+        },
+        "internalMessage": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "responses": {
+    "Standard500ErrorResponse": {
+      "description": "An unexpected error occured."
+    },
+    "Standard400ErrorResponse": {
+      "description": "Incorrect parameters submitted.",
+      "schema": {
+        "$ref": "#/definitions/Error"
+      }
+    },
+    "Standard401ErrorResponse": {
+      "description": "Unauthorized"
+    },
+    "Standard404ErrorResponse": {
+      "description": "Resource does not exists."
+    },
+    "Standard409ErrorResponse": {
+      "description": "Your app is making too many requests and is being rate limited. 429s can trigger on a per-app or per-user basis."
+    }
+  }
+}

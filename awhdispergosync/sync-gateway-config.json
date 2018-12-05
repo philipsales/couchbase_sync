@@ -1,0 +1,25 @@
+{
+    "log": ["CRUD", "CRUD+", "HTTP", "HTTP+", "Access", "Cache", "Shadow", "Shadow+", "Changes", "Changes+", "REST+", "Changes+"],
+    "databases": {
+        "awhdispergodb": {
+            "server": "http://awhdispergodb:8091",
+            "sync":`
+                function (doc) {
+                    channel (doc.channels);
+                }
+            `,
+            "users": {
+                "GUEST": {
+                    "disabled": false, 
+                    "admin_channels": ["*"] 
+                }
+            }
+        }
+    },
+    "CORS": {
+        "Origin": ["http://localhost:8080", "http://localhost:4200", "https://test.curis.online", "https://curis.online"],
+        "LoginOrigin": ["http://localhost:8080", "http://localhost:4200", "https://test.curis.online", "https://curis.online"],
+        "Headers": ["Content-Type"],
+        "MaxAge": 17280000
+    }
+}
